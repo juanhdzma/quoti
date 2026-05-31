@@ -1,4 +1,4 @@
-name: Build
+name: CI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: macos-latest
 
     steps:
@@ -20,5 +20,14 @@ jobs:
             -scheme Quoti \
             -destination 'generic/platform=iOS Simulator' \
             -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Test
+        run: |
+          xcodebuild test \
+            -project Quoti/Quoti.xcodeproj \
+            -scheme Quoti \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
             CODE_SIGNING_ALLOWED=NO \
             | xcpretty && exit ${PIPESTATUS[0]}
