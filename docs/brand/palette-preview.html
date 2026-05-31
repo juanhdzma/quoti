@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quoti — Palette Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --paper:      #FDFAF5;
+      --cream:      #F0E9DC;
+      --ink:        #1A1A1A;
+      --stone:      #8A8278;
+      --terracotta: #C4604A;
+      --terra-soft: #F5EAE7;
+      --ruled:      #E4DDD2;
+    }
+
+    body {
+      background: #1E1C1A;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 56px 32px;
+      gap: 56px;
+      flex-wrap: wrap;
+    }
+
+    /* Phone frame */
+    .phone {
+      width: 375px;
+      background: var(--paper);
+      border-radius: 52px;
+      overflow: hidden;
+      box-shadow:
+        0 40px 100px rgba(0,0,0,0.6),
+        inset 0 0 0 1.5px rgba(255,255,255,0.08),
+        0 0 0 1px #333;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    /* Dynamic island */
+    .dynamic-island {
+      background: #111;
+      height: 34px;
+      border-radius: 0 0 20px 20px;
+      width: 120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .di-camera { width: 10px; height: 10px; background: #222; border-radius: 50%; border: 1.5px solid #333; }
+    .di-pill { width: 32px; height: 10px; background: #222; border-radius: 5px; }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 28px 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* Header */
+    .header {
+      padding: 18px 24px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left {}
+
+    .header-greeting {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--stone);
+      margin-bottom: 2px;
+    }
+
+    .header-title {
+      font-family: 'Lora', serif;
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .header-title span { color: var(--terracotta); }
+
+    .header-btn {
+      width: 38px;
+      height: 38px;
+      background: var(--terracotta);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+      font-weight: 300;
+      line-height: 1;
+      box-shadow: 0 4px 12px rgba(196,96,74,0.35);
+    }
+
+    /* Date strip */
+    .date-strip {
+      padding: 6px 24px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--stone);
+      letter-spacing: 0.2px;
+    }
+
+    /* Featured card */
+    .card-featured {
+      margin: 0 20px 20px;
+      background: var(--ink);
+      border-radius: 24px;
+      padding: 22px 22px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-featured::after {
+      content: '\201C';
+      position: absolute;
+      bottom: -28px;
+      right: 14px;
+      font-family: 'Lora', serif;
+      font-size: 140px;
+      color: var(--terracotta);
+      opacity: 0.18;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .card-featured-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 10px;
+    }
+
+    .card-featured-quote {
+      font-family: 'Lora', serif;
+      font-size: 16px;
+      font-style: italic;
+      color: #F5F0E8;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-featured-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-featured-author {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--stone);
+      font-weight: 500;
+    }
+
+    .card-heart {
+      width: 28px;
+      height: 28px;
+      background: rgba(196,96,74,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    /* Section header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 24px 10px;
+    }
+
+    .section-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    .section-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--terracotta);
+      font-weight: 500;
+    }
+
+    /* Quote list item */
+    .quote-item {
+      padding: 13px 24px;
+      border-bottom: 1px solid var(--ruled);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .quote-item:last-of-type { border-bottom: none; }
+
+    .quote-item-line {
+      width: 3px;
+      min-height: 40px;
+      border-radius: 2px;
+      background: var(--terracotta);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .quote-item-line.muted { background: var(--ruled); }
+
+    .quote-item-text {
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1.5;
+      margin-bottom: 5px;
+    }
+
+    .quote-item-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quote-item-author {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--stone);
+    }
+
+    .tag {
+      display: inline-block;
+      background: var(--cream);
+      color: var(--stone);
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    .tag.accent {
+      background: var(--terra-soft);
+      color: var(--terracotta);
+    }
+
+    /* Bottom nav */
+    .bottom-nav {
+      background: var(--paper);
+      border-top: 1px solid var(--ruled);
+      padding: 14px 8px 30px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--stone);
+      padding: 0 12px;
+    }
+
+    .nav-item.active { color: var(--terracotta); }
+
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--terracotta);
+      margin-top: 2px;
+    }
+
+    /* Swatch panel */
+    .swatch-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 56px;
+    }
+
+    .swatch-panel h3 {
+      font-family: 'Inter', sans-serif;
+      color: #555;
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .swatch {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .swatch-color {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .swatch-info { display: flex; flex-direction: column; gap: 1px; }
+
+    .swatch-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #DDD;
+    }
+
+    .swatch-hex {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: #666;
+    }
+
+    /* SVG icons */
+    svg { display: block; }
+  </style>
+</head>
+<body>
+
+  <div class="phone">
+    <div class="dynamic-island">
+      <div class="di-pill"></div>
+      <div class="di-camera"></div>
+    </div>
+
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="letter-spacing:2px">···</span>
+    </div>
+
+    <div class="header">
+      <div class="header-left">
+        <div class="header-greeting">Good morning, Juan</div>
+        <div class="header-title">Quo<span>ti</span></div>
+      </div>
+      <div class="header-btn">+</div>
+    </div>
+
+    <div class="date-strip">Sunday, June 1 · 3 new quotes</div>
+
+    <div class="card-featured">
+      <div class="card-featured-label">Quote of the day</div>
+      <div class="card-featured-quote">
+        The secret of getting ahead<br>is getting started.
+      </div>
+      <div class="card-featured-footer">
+        <div class="card-featured-author">— Mark Twain</div>
+        <div class="card-heart">♥</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <span class="section-title">Recent</span>
+      <span class="section-link">See all</span>
+    </div>
+
+    <div class="quote-item">
+      <div class="quote-item-line"></div>
+      <div>
+        <div class="quote-item-text">"In the middle of difficulty lies opportunity."</div>
+        <div class="quote-item-meta">
+          <span class="quote-item-author">Albert Einstein</span>
+          <span class="tag accent">Motivation</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-item">
+      <div class="quote-item-line muted"></div>
+      <div>
+        <div class="quote-item-text">"Simplicity is the ultimate sophistication."</div>
+        <div class="quote-item-meta">
+          <span class="quote-item-author">Leonardo da Vinci</span>
+          <span class="tag">Design</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-item">
+      <div class="quote-item-line muted"></div>
+      <div>
+        <div class="quote-item-text">"Do what you can, with what you have, where you are."</div>
+        <div class="quote-item-meta">
+          <span class="quote-item-author">Theodore Roosevelt</span>
+          <span class="tag">Life</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="#C4604A" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 21V12h6v9" stroke="#C4604A" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+        <span>Home</span>
+        <div class="nav-dot"></div>
+      </div>
+      <div class="nav-item">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="8" height="8" rx="2" stroke="#8A8278" stroke-width="1.8"/>
+          <rect x="13" y="3" width="8" height="8" rx="2" stroke="#8A8278" stroke-width="1.8"/>
+          <rect x="3" y="13" width="8" height="8" rx="2" stroke="#8A8278" stroke-width="1.8"/>
+          <rect x="13" y="13" width="8" height="8" rx="2" stroke="#8A8278" stroke-width="1.8"/>
+        </svg>
+        <span>Collections</span>
+      </div>
+      <div class="nav-item">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="7" stroke="#8A8278" stroke-width="1.8"/>
+          <path d="M16.5 16.5L21 21" stroke="#8A8278" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>Explore</span>
+      </div>
+      <div class="nav-item">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="8" r="3.5" stroke="#8A8278" stroke-width="1.8"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#8A8278" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>Profile</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Swatches -->
+  <div class="swatch-panel">
+    <h3>Color palette</h3>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#FDFAF5; border:1px solid #444;"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">paper</span>
+        <span class="swatch-hex">#FDFAF5</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#F0E9DC;"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">cream</span>
+        <span class="swatch-hex">#F0E9DC</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#1A1A1A;"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">ink</span>
+        <span class="swatch-hex">#1A1A1A</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#8A8278;"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">stone</span>
+        <span class="swatch-hex">#8A8278</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#C4604A;"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">terracotta</span>
+        <span class="swatch-hex">#C4604A</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#F5EAE7;"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">terra-soft</span>
+        <span class="swatch-hex">#F5EAE7</span>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#E4DDD2;"></div>
+      <div class="swatch-info">
+        <span class="swatch-name">ruled</span>
+        <span class="swatch-hex">#E4DDD2</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
