@@ -13,14 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install iOS Simulator Runtime
-        run: xcodebuild -downloadPlatform iOS
-
-      - name: Test
+      - name: Build for Testing
         run: |
-          xcodebuild test \
+          xcodebuild build-for-testing \
             -project Quoti/Quoti.xcodeproj \
             -scheme Quoti \
-            -destination 'platform=iOS Simulator,name=Any iOS Simulator Device' \
+            -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
             | xcpretty && exit ${PIPESTATUS[0]}
