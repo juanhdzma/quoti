@@ -18,7 +18,7 @@ jobs:
           xcodebuild build \
             -project Quoti/Quoti.xcodeproj \
             -scheme Quoti \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -destination 'generic/platform=iOS Simulator' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
             | xcpretty && exit ${PIPESTATUS[0]}
@@ -28,6 +28,6 @@ jobs:
           xcodebuild test \
             -project Quoti/Quoti.xcodeproj \
             -scheme Quoti \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -destination 'platform=iOS Simulator,name=Any iOS Simulator Device' \
             CODE_SIGNING_ALLOWED=NO \
             | xcpretty && exit ${PIPESTATUS[0]}
